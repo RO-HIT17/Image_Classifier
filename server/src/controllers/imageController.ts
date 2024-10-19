@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
 import { exec } from 'child_process';
 import { ImageModel } from '../models/ImageModel';
+import { UserModel } from '../models/UserModel';
 import mongoose from 'mongoose';
+
 
 export const uploadImage = async (req: Request, res: Response): Promise<void> => {
   try {
     const imagePath = req.file?.path; 
+    const { email } = req.body;
+    const user = await UserModel.findOne({ email });
 
     exec(`python ../scripts/classify_image.py --image ${imagePath}`, async (error, stdout, stderr) => {
       if (error) {
@@ -15,15 +19,20 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
       }
 
       const result = JSON.parse(stdout); 
-
+      if (!user) {
+        res.status(404).send('User not found');
+        return;
+      }
       const image = new ImageModel({
         imagePath,
         classificationResult: result.class,
         accuracy: result.accuracy,
+        user: user._id,
+
       });
 
       await image.save();
-      res.json({ classification: result.class, accuracy: result.accuracy });
+      res.json({ classification: result.class, accuracy: result.accuracy,user: user.email });
     });
   } catch (error) {
     console.error('Error:', error);
