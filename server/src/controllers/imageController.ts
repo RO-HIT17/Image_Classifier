@@ -80,3 +80,25 @@ export const getResultsById = async (req: Request, res: Response): Promise<void>
     });
   }
 };
+
+export const deleteImages = async (req: Request, res: Response): Promise<void> => {
+  try {
+    await ImageModel.deleteMany({});
+    res.status(200).json({ message: 'All items deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const deleteItem = async (req: Request, res: Response) => {
+  try {
+    const item = await ImageModel.findByIdAndDelete(req.params.id);
+    if (item) {
+      res.status(200).json({ message: 'Item deleted' });
+    } else {
+      res.status(404).json({ message: 'Item not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
