@@ -92,7 +92,8 @@ export const getResultsById = async (req: Request, res: Response): Promise<void>
 
 export const deleteImages = async (req: Request, res: Response): Promise<void> => {
   try {
-    await ImageModel.deleteMany({});
+    const { userId } = req.body;
+    await ImageModel.deleteMany({ user: userId });
     res.status(200).json({ message: 'All items deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
