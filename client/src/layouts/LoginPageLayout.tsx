@@ -8,6 +8,7 @@ import { FaGoogle, FaGithub, FaLinkedin } from 'react-icons/fa';
 
 interface AuthResponse {
   token: string;
+  id:string;
 }
 
 export const LoginPage = () => {
@@ -29,6 +30,7 @@ export const LoginPage = () => {
     try {
       const response = axios.post<AuthResponse>('http://localhost:5000/api/auth/login', { email, password });
       localStorage.setItem('token', (await response).data.token);
+      localStorage.setItem('id', (await response).data.id);
       navigate('/dashboard');
     } 
     catch (error) {
