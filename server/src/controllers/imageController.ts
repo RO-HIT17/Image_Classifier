@@ -61,26 +61,25 @@ export const getResultsById = async (req: Request, res: Response): Promise<void>
 
     
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid ID format',
-      });
+      res.status(400).json({ success: false, message: 'Invalid user ID' });
     }
 
     
-    const result = await ImageModel.findById(id);
+    const results = await ImageModel.find({ user: id });
 
-    if (!result) {
+    if (!results) {
       res.status(404).json({
         success: false,
-        message: `No result found with ID: ${id}`,
+        message: `No result for User with ID: ${id}`,
       });
     }
 
     res.status(200).json({
       success: true,
-      data: result,
+      count: results.length,
+      data: results,
     });
+    
   } catch (error) {
     console.error('Error fetching classification result by ID:', error);
     res.status(500).json({

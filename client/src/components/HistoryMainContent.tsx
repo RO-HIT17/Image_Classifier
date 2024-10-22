@@ -2,7 +2,7 @@ import  { useState, useEffect } from 'react';
 import { Button } from '../components/Button'; 
 import { Input } from '../components/Input';   
 import { Label } from '../components/Label';   
-import { getToken } from '../utils/jwt';
+import { getToken, getId } from '../utils/jwt';
 
 
 
@@ -11,6 +11,7 @@ type result = {
   imagePath: string;
   classificationResult: string;
   accuracy: number;
+  user:string;
   createdAt: string;
 };
 
@@ -21,11 +22,16 @@ const HistoryMainContent = () => {
 
 
   useEffect(() => {
+    const id =getId();
+    //console.log('User ID from params:', id);
     const fetchHistory = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/images/results', {
-          headers: { 'Authorization': `Bearer ${getToken()}` },
+        const response = await fetch(`http://localhost:5000/api/images/results/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${getToken()}`, 
+          },
         });
+
         const data = await response.json();
 
         if (data && data.data) {
