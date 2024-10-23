@@ -8,7 +8,8 @@ export const Sidebar = () => {
   const navigate = useNavigate(); 
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); 
+    localStorage.removeItem('token');
+    localStorage.removeItem('id');
     navigate('/');
   };
 

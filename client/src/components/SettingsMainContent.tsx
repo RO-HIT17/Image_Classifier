@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Button } from './Button'; 
 import { Input } from './Input'; 
 import { Label } from './Label'; 
+import axios from 'axios';
 
-export const SettingsMainContent = () => {
+const SettingsMainContent = () => {
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -15,9 +16,24 @@ export const SettingsMainContent = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Updated Profile: ', profile);
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('id');
+
+    try {
+      const response = await axios.put('http://localhost:5000/api/auth/update', 
+        { ...profile, userId },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      console.log('Updated Profile: ', response.data);
+    } catch (error) {
+      console.error('Error updating profile: ', error);
+    }
   };
 
   return (
